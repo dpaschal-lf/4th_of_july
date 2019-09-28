@@ -1,0 +1,46 @@
+body{
+    margin: 0;
+    height: 90vh;
+    width: 100vw;
+    background-color: black;
+    border: 1px solid lime;
+    position: relative;
+  }
+  .launcher{
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    height: 3px;
+    width: 3px;
+    background-color: lime;
+  }
+  .rocket{
+    height: 5px;
+    width: 5px;
+    position: absolute;
+    background-color: red;
+  }  	
+  .particle{
+      position: absolute;
+      height: 5px;
+      width: 5px;
+      background-color: white;
+  }
+  button{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform:translate(-50%, -50%);
+  }
+  #startButton{
+    display: none;
+  }
+  #loading{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: lime;
+    transform: translate(-50%, -50%);
+  }
+  
+  
