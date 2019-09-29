@@ -3,8 +3,9 @@ body{
     height: 90vh;
     width: 100vw;
     background-color: black;
-    border: 1px solid lime;
+    border: 2px solid lightcyan;
     position: relative;
+    box-sizing: border-box;
   }
   .launcher{
     position: absolute;
@@ -15,16 +16,18 @@ body{
     background-color: lime;
   }
   .rocket{
-    height: 5px;
-    width: 5px;
+    height: 2vmin;
+    width: 2vmin;
     position: absolute;
     background-color: red;
+    border-radius: 50%;
   }  	
   .particle{
       position: absolute;
-      height: 5px;
-      width: 5px;
+      height: 2vmin;
+      width: 2vmin;
       background-color: white;
+      border-radius: 50%;
   }
   button{
     position: absolute;
@@ -38,8 +41,45 @@ body{
   #loading{
     position: absolute;
     left: 50%;
+    top: 75%;
+    height: 30%;
+    color: fuchsia;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    font-size: 4vmin;
+    text-align: center;
+  }
+
+  #joseMessage{
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+    font-size: 6vmin;
+    font-family: 'Shadows Into Light', cursive;
+    height: 75%;
+  }
+  #joseName{
+    position: absolute;
+    left: 50%;
     top: 50%;
-    color: lime;
+  }
+  .spoke{
+    position: absolute;
+    transform-origin: 0% 50%;
+    /* border: white solid 1px; */
+    width: 35vmin;
+    height: 30px;
+    left: 50%;
+
+  }
+  .letter{
+    position: absolute;
+    /* border: 1px solid lime; */
+    left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
   }
   

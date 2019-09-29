@@ -5,7 +5,7 @@ var launcher = null;
 var launcherPosition = null;
 var gravity = 1;
 var updateTime = 30;
-var rocketVelocity = 25;
+var rocketVelocity = 32;
 var pageWidth = null;
 var pageHeight = null;
 var updatesPerSecond = 1000 / updateTime;
@@ -22,7 +22,7 @@ var fireWorkMinLaunchTime = 100;
 var volume = {
   music: 1,
   launch: .2,
-  explode: .3
+  explode: .1
 }
 var particleVelocity = {
 	min: 3,
@@ -34,6 +34,15 @@ var particleLife = {
 }
 var fireworksToFire=startingFireworks;
 
+/* word showing data */
+
+var wordIntervals = {
+    betweenLetters: 80,
+    betweenEntries: 2000
+}
+
+var targetWordDisplayElement = null;
+
 
 function startApp(){
   makeLauncher();
@@ -44,11 +53,18 @@ function startApp(){
   
   pageHeight = $("body").height()*.25;
   player.oncanplaythrough=showLoaded;
-  player.src="https://archive.org/download/WashingtonPostMarch/washington_post_64kb.mp3";
+  player.onpause = function(){
+    player.currentTime = 0;
+    player.play();
+  }
+  //player.src="baby_elephant.mp3";
+  player.src="mainstreet.mp3";
   //player.src='https://thebeautybrains.com/wp-content/uploads/podcast/soundfx/m80.wav';
   player.volume = volume.music;
   //console.log('done start load');
   $("button").click(startTheShow);
+  targetWordDisplayElement = $("#loading");
+  displayWordInArc( $('#joseName'),180 )
 }
 
 function showLoaded(){
@@ -60,18 +76,88 @@ function startTheShow(){
   $("#startButton").hide();
   player.play();
   fireRandomFirework();
+  $("#loading").show();
+  targetWordDisplayElement = $("#loading");
+  displayAllWordsInSequence([
+    'Thank you to every one here!',
+    'We appreciate you celebrating with us on this special day',
+    'We celebrate the impending arrival of Josephine Thi Paschal',
+    'She will arrive in mid-December'
+  ],targetWordDisplayElement)
 }
+
+function displayWordInArc( targetWord, arcDistance ){
+  var letterArray = $(targetWord).text().split('');
+  var elementArray = [];
+  var angleBetweenLetters = Math.floor(arcDistance / letterArray.length);
+  var startAngle = 270 -  angleBetweenLetters * (letterArray.length / 2 - .5 ) ;
+  var colorConverter = {
+    'pink': 'cornflowerblue',
+    'cornflowerblue': 'fuscia',
+    'fuscia': 'yellow',
+    'yellow': 'pink'
+  }
+  var currentColor = 'pink';
+  for( var letterIndex = 0, currentAngle = startAngle; letterIndex < letterArray.length; letterIndex++, currentAngle+=angleBetweenLetters){
+    var spoke = $('<div>',{
+      class: 'spoke',
+      css:{
+        'transform': 'rotateZ('+currentAngle+'deg)'
+      }
+    });
+    var letter = $("<div>",{
+      class: 'letter',
+      text: letterArray[letterIndex],
+      css:{
+        'transform': 'translate(-50%, -50%) rotateZ(90deg)',
+        color: currentColor
+      }
+    });
+    currentColor = colorConverter[currentColor];
+    spoke.append(letter);
+    elementArray.push( spoke );
+  }
+  $(targetWord).text('').append(elementArray);
+}
+function displayAllWordsInSequence( sequence, targetElement ){
+    var currentSentenceInSequence = 0;
+    displaySentenceOneLetterAtATime();
+
+    function displaySentenceOneLetterAtATime( ){
+        targetElement.text('');
+        var sentencePosition = 0;
+        displayOneLetter();
+        function displayOneLetter(){
+            targetElement.append( sequence[ currentSentenceInSequence][sentencePosition]);
+            if(++sentencePosition !== sequence[ currentSentenceInSequence ].length){
+                setTimeout( displayOneLetter, wordIntervals.betweenLetters);
+            } else {
+                if(++currentSentenceInSequence !== sequence.length ){
+                    setTimeout( displaySentenceOneLetterAtATime, wordIntervals.betweenEntries);
+                } else {
+                  setTimeout( displayAllWordsInSequence, wordIntervals.betweenEntries,  sequence, targetElement )
+                }
+            }
+        }
+    }
+
+}
+
+
 
 function fireRandomFirework(){
   if(--fireworksToFire>0){
     var randomX = (Math.random() * pageWidth)*0.5 + pageWidth*.25;
     var randomY = Math.random() * pageHeight;
-    var launchPlayer = new Audio('http://dight310.byu.edu/media/audio/FreeLoops.com/5/5/Pinball%20Game%20Sounds-14358-Free-Loops.com.mp3');
+    var launchPlayer = new Audio('launch.mp3');
     launchPlayer.volume= volume.launch;
     launchPlayer.play();
     shootFirework(randomX,randomY);
   } else {
-    $("#loading").text('Happy 4th of July!').show(200);
+    fireworksToFire = startingFireworks;
+    fireWorkMaxLaunchTime = 500;
+    fireWorkMinLaunchTime = 100;
+    // $("#loading").text('Happy 4th of July!').show(200);
   }
   if(fireworksToFire < accelerateLaunchFireworks){
     console.log('turbo boost');
@@ -99,7 +185,7 @@ function shootFirework(targetX, targetY){
     x: launcherPosition.left,
     y: launcherPosition.top
   };
-  var colors = ['red', 'pink','white','white','blue','lightblue']
+  var colors = ['red', 'lime','white','white','blue','purple']
 //   var color = {
 //     r: Math.random()*255 >> 0,
 //     g: Math.random()*255 >> 0,
@@ -147,7 +233,7 @@ function shootFirework(targetX, targetY){
     })
   }
   function explode(){
-    var explodePlayer = new Audio('http://s1download-universal-soundbank.com/wav/2773.wav');
+    var explodePlayer = new Audio('explode.wav');
     explodePlayer.volume=volume.explode;
     explodePlayer.play();
   	var randomParticleCount = Math.ceil( Math.random() * maxParticles - minParticles) + minParticles;
